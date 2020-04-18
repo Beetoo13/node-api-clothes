@@ -1,0 +1,11 @@
+{
+  "name": "api-clothes",
+  "version": "1.0.0",
+  "description": "Api para determinar tipo de ropa en base a clima",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Beto Quezada",
+  "license": "ISC"
+}
