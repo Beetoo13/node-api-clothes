@@ -1,10 +1,13 @@
 const express = require('express')
 const app = express()
 const bodyParser =require('body-parser')
+// const multer = require('multer')
+// const fs = require('fs')
 
 //Settings
 app.set('port', process.env.Port || 3000);
-app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.json({limit: '10mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 
 //Middlewares
 app.use(express.urlencoded({extended: false}));
@@ -15,6 +18,7 @@ app.get('/', (req, res) => {
     res.send("Simón ya anda jalando")
 });
 
-app.listen(app.get('port'), () => {
-    console.log("Server running on port: " + app.get('port'));
-});
+app.use(require('../routes/tipoRopa'));
+app.use(require('../routes/conjunto'));
+
+module.exports = app;
