@@ -2,42 +2,43 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const imgTopSchema = new Schema({
-  name: String,
-  img64top: String,
-});
+  name: {type: String},
+  img64top: {type: String},
+}, { _id : false });
 
 const imgTopTipoSchema = new Schema({
-  tipo: String,
-});
+  tipo: {type: String},
+}, { _id : false });
 
 const imgBottomSchema = new Schema({
-  name: String,
-  img64bottom: String,
-});
+  name: {type: String},
+  img64bottom: {type: String},
+}, { _id : false });
 
 const imgBottomTipoSchema = new Schema({
-  tipo: String,
-});
+  tipo: {type: String},
+}, { _id : false });
 
 const imgMiscSchema = new Schema({
-  name: String,
-  img64misc: String,
-});
+  name: {type: String},
+  img64misc: {type: String},
+}, { _id : false });
 
 const imgMiscTipoSchema = new Schema({
-  tipo: String,
-});
+  tipo: {type: String},
+}, { _id : false });
 
 const imgShoesSchema = new Schema({
-  name: String,
-  img64shoes: String,
-});
+  name: {type: String},
+  img64shoes: {type: String},
+}, { _id : false });
 
 const imgShoesTipoSchema = new Schema({
-  tipo: String,
-});
+  tipo: {type: String},
+}, { _id : false });
 
 const conjuntoSchema = new Schema({
+  _id: {type: String},
   imgTop: imgTopSchema,
   imgTopTipo: imgTopTipoSchema,
   imgBottom: imgBottomSchema,
