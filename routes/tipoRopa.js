@@ -23,11 +23,12 @@ router.get("/clima", (req, res) => {
       output.upperbody[0] === "windbreaker" ||
       output.upperbody[0] === "rain jacket" ||
       output.upperbody[0] === "jacker warm jacket" ||
-      output.upperbody[0] === "coat"
+      output.upperbody[0] === "coat" ||
+      output.upperbody[0] === "light jacket"
     ) {
       output.upperbody[0] = "chamarra";
     } else if (output.upperbody[0] === "shirt") {
-        output.upperbody[0] = "playera";
+      output.upperbody[0] = "playera";
     }
 
     if (output.shoes === "boots") {
@@ -37,7 +38,7 @@ router.get("/clima", (req, res) => {
     }
 
     if (output.misc[0] === "umbrella") {
-      output.misc[0] = "Paraguas";
+      output.misc[0] = "paraguas";
     } else if (output.misc[0] === "gloves") {
       output.misc[0] = "guantes";
     } else if (output.misc[0] === "hat") {
@@ -48,6 +49,7 @@ router.get("/clima", (req, res) => {
       output.misc[0] = "lentesdesol";
     }
 
+    console.log(output);
     res.json(output);
     // console.log("Temp: " + JSONObj.main.temp);
     // console.log("Precipitación: " + (0.10 * 100) + "%");
