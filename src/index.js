@@ -6,8 +6,8 @@ const bodyParser =require('body-parser')
 
 //Settings
 app.set('port', process.env.Port || 3000);
-app.use(bodyParser.json({limit: '10mb', extended: true}))
-app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
+app.use(bodyParser.json({limit: '50mb', extended: true}))
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 
 //Middlewares
 app.use(express.urlencoded({extended: false}));
@@ -20,5 +20,6 @@ app.get('/', (req, res) => {
 
 app.use(require('../routes/tipoRopa'));
 app.use(require('../routes/conjunto'));
+app.use(require('../routes/fragmentHistorial'));
 
 module.exports = app;
