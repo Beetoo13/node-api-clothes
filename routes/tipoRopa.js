@@ -6,14 +6,11 @@ let cbw = require("clothes-by-weather");
 let img64Top,
   img64Bottom,
   img64Shoes,
-  img64Misc = "";
-
-let objetoAEnviar = {
-  topObtenido: "",
-  bottomObtenido: "",
-  shoesObtenido: "",
-  miscObtenido: "",
-};
+  img64Misc,
+  tipoTopEnviar,
+  tipoBottomEnviar,
+  tipoMiscEnviar,
+  tipoShoesEnviar = "";
 
 //Definiendo la localización y settings de la api de openweather.
 weather.setLang("es");
@@ -25,7 +22,7 @@ weather.setAPPID("4236fa2e07725ffebd4e48aa51f9ab9b");
 const Conjunto = require("../src/models/ConjuntoSchema");
 
 //Métodos de la api openweather.
-router.get("/clima", (req, res) => {
+router.get("/climaUpper", (req, res) => {
   weather.getAllWeather(function (err, JSONObj) {
     const output = cbw({
       temperature: JSONObj.main.temp,
@@ -37,9 +34,6 @@ router.get("/clima", (req, res) => {
     console.log(output);
 
     console.log("output upperbody: " + output.upperbody);
-    console.log("output lowerbody: " + output.lowerbody);
-    console.log("output shoes: " + output.shoes);
-    console.log("output misc: " + output.misc);
 
     if (
       output.upperbody[0] === "windbreaker" ||
@@ -53,32 +47,9 @@ router.get("/clima", (req, res) => {
       output.upperbody[0] = "Playera";
     }
 
-    if (output.shoes === "boots") {
-      output.shoes = "botas";
-    } else if (output.shoes === "sneakers") {
-      output.shoes = "tenis";
-    }
-
-    if (output.misc[0] === "umbrella") {
-      output.misc[0] = "paraguas";
-    } else if (output.misc[0] === "gloves") {
-      output.misc[0] = "guantes";
-    } else if (output.misc[0] === "hat") {
-      output.misc[0] = "sombrero";
-    } else if (output.misc[0] === "socks") {
-      output.misc[0] = "calcetines";
-    } else if (output.misc[0] === "sunglasses") {
-      output.misc[0] = "lentesdesol";
-    } else {
-      output.misc[0] = "calcetines";
-    }
-
     Conjunto.find(
       {
         imgTopTipo: { tipo: output.upperbody[0] },
-        imgBottomTipo: { tipo: output.lowerbody },
-        imgMiscTipo: { tipo: output.misc[0] }, //AQUÍ HAY ERROR
-        imgShoesTipo: { tipo: output.shoes },
       },
       (err, concepts) => {
         if (err) {
@@ -97,37 +68,183 @@ router.get("/clima", (req, res) => {
 
         //Nos ayuda a elegir un objeto random para sacar la ropa random también.
         valor_random1 = Math.floor(Math.random() * tamaño_concepts);
-        valor_random2 = Math.floor(Math.random() * tamaño_concepts);
-        valor_random3 = Math.floor(Math.random() * tamaño_concepts);
-        valor_random4 = Math.floor(Math.random() * tamaño_concepts);
 
-        // console.log("Valor random1: " + valor_random1);
-        // console.log("Valor random2: " + valor_random2);
-        // console.log("Valor random3: " + valor_random3);
-        // console.log("Valor random4: " + valor_random4);
+        console.log("Valor random1: " + valor_random1);
 
         img64Top = concepts[valor_random1].get("imgTop");
-        img64Bottom = concepts[valor_random2].get("imgBottom");
-        img64Shoes = concepts[valor_random3].get("imgShoes");
-        img64Misc = concepts[valor_random4].get("imgMisc");
 
-        objetoAEnviar.topObtenido = img64Top.img64top;
-        objetoAEnviar.bottomObtenido = img64Bottom.img64bottom;
-        objetoAEnviar.shoesObtenido = img64Shoes.img64shoes;
-        objetoAEnviar.miscObtenido = img64Misc.img64misc;
+        tipoTopEnviar = concepts[valor_random1].get("imgTopTipo");
 
-        //console.log(objetoAEnviar);
-
-        res.json(objetoAEnviar);
+        res.send({ imgTop: img64Top.img64top, tipoTop: tipoTopEnviar.tipo });
       }
     );
+  });
+});
 
-    //console.log(output);
-    //res.json(output);
-    // console.log("Temp: " + JSONObj.main.temp);
-    // console.log("Precipitación: " + (0.10 * 100) + "%");
-    // console.log("Descripción: " + JSONObj.weather[0].main);
-    // console.log("Velocidad del viento: " + JSONObj.wind.speed + " m/s");
+router.get("/climaLower", (req, res) => {
+  //res.send({ message: "calmame crack lower" });
+
+  weather.getAllWeather(function (err, JSONObj) {
+    const output = cbw({
+      temperature: JSONObj.main.temp,
+      pop: 0.1,
+      description: JSONObj.weather[0].main,
+      windGust: JSONObj.wind.speed,
+    });
+
+    //res.send(output.lowerbody);
+
+    Conjunto.find(
+      { imgBottomTipo: { tipo: output.lowerbody } },
+      (err, concepts) => {
+        if (err) {
+          console.log("PETACIÓN");
+          return res
+            .status(500)
+            .send({ message: `Problem with the searching request ${err}` });
+        }
+        if (concepts == null) {
+          return res.status(404).send({ message: `Data does not exists` });
+        }
+
+        console.log("Tamaño del concepts: " + concepts.length);
+
+        tamaño_concepts = concepts.length;
+
+        //Nos ayuda a elegir un objeto random para sacar la ropa random también.
+        valor_random2 = Math.floor(Math.random() * tamaño_concepts);
+
+        console.log("Valor random2: " + valor_random2);
+
+        img64Bottom = concepts[valor_random2].get("imgBottom");
+
+        tipoBottomEnviar = concepts[valor_random2].get("imgBottomTipo");
+
+        res.send({
+          imgBottom: img64Bottom.img64bottom,
+          tipoBottom: tipoBottomEnviar.tipo,
+        });
+      }
+    );
+  });
+});
+
+router.get("/climaShoes", (req, res) => {
+  weather.getAllWeather(function (err, JSONObj) {
+    const output = cbw({
+      temperature: JSONObj.main.temp,
+      pop: 0.1,
+      description: JSONObj.weather[0].main,
+      windGust: JSONObj.wind.speed,
+    });
+
+    if (output.shoes === "boots") {
+      output.shoes = "botas";
+    } else if (output.shoes === "sneakers") {
+      output.shoes = "tenis";
+    }
+
+    //res.send(output.lowerbody);
+
+    Conjunto.find({ imgShoesTipo: { tipo: output.shoes } }, (err, concepts) => {
+      if (err) {
+        console.log("PETACIÓN");
+        return res
+          .status(500)
+          .send({ message: `Problem with the searching request ${err}` });
+      }
+      if (concepts == null) {
+        return res.status(404).send({ message: `Data does not exists` });
+      }
+
+      console.log("Tamaño del concepts: " + concepts.length);
+
+      tamaño_concepts = concepts.length;
+
+      //Nos ayuda a elegir un objeto random para sacar la ropa random también.
+      valor_random3 = Math.floor(Math.random() * tamaño_concepts);
+
+      console.log("Valor random3: " + valor_random3);
+
+      img64Shoes = concepts[valor_random3].get("imgShoes");
+
+      tipoShoesEnviar = concepts[valor_random3].get("imgShoesTipo");
+
+      res.send({
+        imgShoes: img64Shoes.img64shoes,
+        tipoShoes: tipoShoesEnviar.tipo,
+      });
+    });
+  });
+});
+
+router.get("/climaMisc", (req, res) => {
+  weather.getAllWeather(function (err, JSONObj) {
+    const output = cbw({
+      temperature: JSONObj.main.temp,
+      pop: 0.1,
+      description: JSONObj.weather[0].main,
+      windGust: JSONObj.wind.speed,
+    });
+
+    numeroIf = Math.floor(Math.random() * 3);
+    /*
+    if (output.misc[0] === "umbrella") {
+      output.misc[0] = "paraguas";
+    } else if (output.misc[0] === "gloves") {
+      output.misc[0] = "guantes";
+    } else if (output.misc[0] === "hat") {
+      output.misc[0] = "sombrero";
+    } else if (output.misc[0] === "socks") {
+      output.misc[0] = "calcetines";
+    } else if (output.misc[0] === "sunglasses") {
+      output.misc[0] = "lentesdesol";
+    } else if (output.misc[0] === undefined) {
+      output.misc[0] = "calcetines";
+    }
+*/
+    //console.log("NumeroIf: ", numeroIf);
+
+    if (numeroIf === 0) {
+      output.misc[0] = "calcetines";
+    } else if (numeroIf === 1) {
+      output.misc[0] = "sombrero";
+    } else if (numeroIf === 2) {
+      output.misc[0] = "paraguas";
+    }
+
+    Conjunto.find(
+      { imgMiscTipo: { tipo: output.misc[0] } },
+      (err, concepts) => {
+        if (err) {
+          console.log("PETACIÓN");
+          return res
+            .status(500)
+            .send({ message: `Problem with the searching request ${err}` });
+        }
+        if (concepts == null) {
+          return res.status(404).send({ message: `Data does not exists` });
+        }
+
+        console.log("Tamaño del concepts: " + concepts.length);
+
+        tamaño_concepts = concepts.length;
+
+        //Nos ayuda a elegir un objeto random para sacar la ropa random también.
+        valor_random4 = Math.floor(Math.random() * tamaño_concepts);
+
+        console.log("Valor random4: " + valor_random4);
+
+        img64Misc = concepts[valor_random4].get("imgMisc");
+
+        tipoMiscEnviar = concepts[valor_random4].get("imgMiscTipo");
+
+        res.send({
+          imgMisc: img64Misc.img64misc,
+          tipoMisc: tipoMiscEnviar.tipo,
+        });
+      }
+    );
   });
 });
 

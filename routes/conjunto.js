@@ -6,7 +6,7 @@ const Conjunto = require("../src/models/ConjuntoSchema");
 
 router.post("/conjunto", (req, res) => {
   let body = req.body;
-  console.log("Body", body);
+  //console.log("Body", body);
 
   //res.status(200).send(body);
 
