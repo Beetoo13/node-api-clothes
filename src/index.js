@@ -22,5 +22,6 @@ app.use(require("../routes/tipoRopa"));
 app.use(require("../routes/conjunto"));
 app.use(require("../routes/fragmentHistorial"));
 app.use(require("../routes/fragmentHistorialDetalles"));
+app.use(require("../routes/fragmentDescubrir"));
 
 module.exports = app;

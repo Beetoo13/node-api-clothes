@@ -6,7 +6,7 @@ const Conjunto = require("../src/models/ConjuntoSchema");
 
 router.post("/conjunto", (req, res) => {
   let body = req.body;
-  //console.log("Body", body);
+  console.log("Body", body);
 
   //res.status(200).send(body);
 
@@ -18,10 +18,9 @@ router.post("/conjunto", (req, res) => {
       res.status(500).send({ message: "El error:" + err });
       return;
     }
+    console.log("New Conjunto added");
     res.status(200).send({ job: conceptjob });
   });
-
-  console.log("New Conjunto added");
 });
 
 module.exports = router;
