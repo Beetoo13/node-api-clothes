@@ -9,7 +9,7 @@ let num_documentos_enviar = 0;
 
 router.get("/historial", (req, res) => {
   Conjunto.countDocuments({}, (err, numeroDocumentosRecibido) => {
-    //console.log("Numero de documentos: " + numeroDocumentosRecibido);
+    console.log("Numero de documentos: " + numeroDocumentosRecibido);
     num_documentos_enviar = numeroDocumentosRecibido;
   });
 
